@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.order.controller;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -26,7 +27,6 @@ import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.common.controller.BaseController;
 import com.stylefeng.guns.common.exception.BizExceptionEnum;
 import com.stylefeng.guns.common.exception.BussinessException;
-import com.stylefeng.guns.common.persistence.dao.OrdersMapper;
 import com.stylefeng.guns.common.persistence.model.Orders;
 import com.stylefeng.guns.config.properties.GunsProperties;
 import com.stylefeng.guns.core.log.LogObjectHolder;
@@ -39,6 +39,7 @@ import com.stylefeng.guns.modular.order.service.IOrderService;
  * @author fengshuonan
  * @Date 2017-07-18 12:47:43
  */
+@Api(tags = "order", value="订单管理")
 @Controller
 @RequestMapping("/order")
 public class OrderController extends BaseController {
