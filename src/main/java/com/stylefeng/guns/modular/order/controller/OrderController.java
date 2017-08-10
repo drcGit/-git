@@ -3,6 +3,8 @@ package com.stylefeng.guns.modular.order.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import java.io.File;
 import java.util.List;
@@ -12,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,9 +27,11 @@ import com.stylefeng.guns.common.annotion.Permission;
 import com.stylefeng.guns.common.annotion.log.BussinessLog;
 import com.stylefeng.guns.common.constant.Dict;
 import com.stylefeng.guns.common.constant.factory.PageFactory;
+import com.stylefeng.guns.common.constant.tips.SuccessTip;
 import com.stylefeng.guns.common.controller.BaseController;
 import com.stylefeng.guns.common.exception.BizExceptionEnum;
 import com.stylefeng.guns.common.exception.BussinessException;
+import com.stylefeng.guns.common.page.PageInfoBT;
 import com.stylefeng.guns.common.persistence.model.Orders;
 import com.stylefeng.guns.config.properties.GunsProperties;
 import com.stylefeng.guns.core.log.LogObjectHolder;
@@ -90,11 +95,11 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ApiOperation(value="订单管理", notes="订单列表")
     @ResponseBody
-    public Object list(String condition) {
+    public PageInfoBT<Orders> list(String condition) {
     	Page<Orders> page = new PageFactory<Orders>().defaultPage();
     	List<Orders> list = orderDao.getOrders(page);
     	 page.setRecords(list);
-         return super.packForBT(page);
+         return (PageInfoBT<Orders>) super.packForBT(page);
     }
 
     /**
@@ -103,9 +108,19 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @BussinessLog(value = "新增订单", key = "name", dict = Dict.OrdersDict)
     @ApiOperation(value="订单管理", notes="新增订单")
+    @ApiResponses(
+    		value = {
+    			@ApiResponse(code = 404, message = "资源路径不存在", response = SuccessTip.class),
+    			@ApiResponse(code = 201, message = "参数错误", response = SuccessTip.class),
+    			@ApiResponse(code = 500, message = "系统异常", response = SuccessTip.class),
+    			@ApiResponse(code = 200, message = "操作成功", response = SuccessTip.class),
+    			@ApiResponse(code = 540, message = "操作失败", response = SuccessTip.class)
+    		}
+    )
     @Permission
     @ResponseBody
-    public Object add(@ApiParam(value = "订单信息",required = true)Orders order) {
+    public Object add(
+    	@ModelAttribute Orders order) {
     	orderDao.insert(order);
         return super.SUCCESS_TIP;
     }
